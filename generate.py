@@ -1,23 +1,23 @@
 import pandas as pd
 from pathlib import Path
 
-# Fungsi untuk membuat konten deskripsi sumur
+# Function to create well description content
 def create_well_content(row):
-    content = (f"Pada tanggal {row['PIS_DATE']}, sumur bernama {row['GRID_NAME']} didirikan, dengan nama string {row['STRING_NAME']} "
-               f"dan nama alternatif {row['ALT_NAME']} dengan tipe pengeboran {row['DRILL_TYPE']}. Sumur {row['GRID_NAME']} ini dibor pada "
-               f"{row['STATUS_START_DATE']} dan saat ini berstatus {row['STATUS']} dengan tipe {row['STATUS_TYPE']}. ")
+    content = (f"On {row['PIS_DATE']}, a well named {row['GRID_NAME']} was established, with string name {row['STRING_NAME']} "
+               f"and alternative name {row['ALT_NAME']} with drilling type {row['DRILL_TYPE']}. The well {row['GRID_NAME']} was drilled on "
+               f"{row['STATUS_START_DATE']} and is currently {row['STATUS']} with status type {row['STATUS_TYPE']}. ")
     return content
 
-# Fungsi untuk membuat konten deskripsi produksi sumur
+# Function to create well production description content
 def create_production_content(grouped_data):
     production_content = ""
     for _, row in grouped_data.iterrows():
-        production_content += (f"Pada tanggal {row['TEST_DATE']} pukul {row['TEST_TIME']}, sumur ini menghasilkan "
-                               f"{row['OIL_BOPD']} barel per hari dengan GAS MSCFPD {row['GAS_MSCFPD']} dan persentase water cut {row['WATER_CUT_PERCENT']}. ")
+        production_content += (f"On {row['TEST_DATE']} at {row['TEST_TIME']}, this well produced "
+                               f"{row['OIL_BOPD']} barrels per day with GAS MSCFPD {row['GAS_MSCFPD']} and water cut percentage {row['WATER_CUT_PERCENT']}. ")
     return production_content
 
-# Load data from the excel file
-file_path = 'E:/LLAMA/data/PoC.xlsx'
+# Load data from the Excel file
+file_path = 'D:/Nazirman/LLAMA/data/PoC.xlsx'
 
 # Read data from both sheets
 prod_data = pd.read_excel(file_path, sheet_name='PROD_DATA')
@@ -39,17 +39,17 @@ for _, row in last_data.iterrows():
     status = row['STATUS']
     status_type = row['STATUS_TYPE']
     
-    # Buat konten deskripsi sumur
+    # Create well description content
     well_content = create_well_content(row)
     
-    # Tambahkan deskripsi produksi dari semua baris yang sesuai di prod_data
+    # Add production description from all matching rows in prod_data
     prod_rows = prod_data[prod_data['GRID_NAME'] == grid_name]
     production_content = create_production_content(prod_rows)
     
-    # Gabungkan konten deskripsi sumur dengan konten produksi
+    # Combine well description content with production content
     full_content = well_content + production_content
     
-    # Simpan ke dictionary
+    # Save to dictionary
     well_contents[grid_name] = full_content
 
 # Print content for verification
@@ -66,3 +66,4 @@ for grid_name, content in well_contents.items():
         file.write(content)
 
 print("Text files generated successfully.")
+
